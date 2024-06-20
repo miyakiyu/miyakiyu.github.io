@@ -3,12 +3,12 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Coding Notes
-subtitle: ''
+title: May's Note
+subtitle: May's Note for side projects
 description: ''
-keywords:
+keywords: Notes, Projects
 author: May Hsieh
-language: en
+language: en, zh-TW
 timezone: ''
 
 # URL
@@ -102,5 +102,5 @@ theme: landscape
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: git
-  repo: https://github.com/miyakiyu/miyakiyu.github.io.git
+  repo: git@github.com:miyakiyu/miyakiyu.github.io.git
   branch: main
