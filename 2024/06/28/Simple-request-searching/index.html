@@ -28,10 +28,10 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/pic/side_project.jpg">
 <meta property="article:published_time" content="2024-06-28T05:31:59.000Z">
-<meta property="article:modified_time" content="2024-06-28T07:16:05.940Z">
+<meta property="article:modified_time" content="2024-06-28T10:26:53.068Z">
 <meta property="article:author" content="May Hsieh">
-<meta property="article:tag" content="Kubernetes">
 <meta property="article:tag" content="Docker">
+<meta property="article:tag" content="Kubernetes">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/pic/side_project.jpg">
 
@@ -103,7 +103,7 @@
   
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           Table of Contents
@@ -116,6 +116,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Docker"><span class="nav-number">1.</span> <span class="nav-text">Docker</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Create-Nginx-and-MySQL-container"><span class="nav-number">1.1.</span> <span class="nav-text">Create Nginx and MySQL container</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -130,7 +131,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-count">4</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -200,7 +201,7 @@
       <span class="post-meta-item-text">Posted on</span>
       
 
-      <time title="Created: 2024-06-28 13:31:59 / Modified: 15:16:05" itemprop="dateCreated datePublished" datetime="2024-06-28T13:31:59+08:00">2024-06-28</time>
+      <time title="Created: 2024-06-28 13:31:59 / Modified: 18:26:53" itemprop="dateCreated datePublished" datetime="2024-06-28T13:31:59+08:00">2024-06-28</time>
     </span>
 
   
@@ -212,10 +213,14 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><p><img src="/pic/side_project.jpg"><br><em>Using Docker to containerize the MySQL service and Nginx to provide the web service, and managing these containers with Kubernetes to create a simple search service.</em></p>
+    <div class="post-body" itemprop="articleBody"><p><img src="/pic/side_project.jpg" alt="Structure chart"><br><em>Using Docker to containerize the MySQL service and Nginx to provide the web service, and managing these containers with Kubernetes to create a simple search service.</em></p>
 <span id="more"></span>
 
-
+<p>I decided to use K8S to control and manage my Docker containers. This will be a small application where users can request data through a website. For the web service, I will use Nginx, and for the database, I will use MySQL.<br>So let’s start!</p>
+<hr>
+<h2 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h2><ol>
+<li><h3 id="Create-Nginx-and-MySQL-container"><a href="#Create-Nginx-and-MySQL-container" class="headerlink" title="Create Nginx and MySQL container"></a>Create Nginx and MySQL container</h3></li>
+</ol>
 
     </div>
 
@@ -225,8 +230,8 @@
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Kubernetes/" rel="tag"># Kubernetes</a>
               <a href="/tags/Docker/" rel="tag"># Docker</a>
+              <a href="/tags/Kubernetes/" rel="tag"># Kubernetes</a>
           </div>
 
         
@@ -238,6 +243,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2024/06/28/Dockerfile-Docker-compose/" rel="next" title="Dockerfile & Docker compose">
+                  Dockerfile & Docker compose <i class="fa fa-angle-right"></i>
+                </a>
             </div>
           </div>
     </footer>
