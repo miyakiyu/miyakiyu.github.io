@@ -1,15 +1,17 @@
 ---
-title: DevOps_skill_list_for_me
+title: DevOps skill list for me
 date: 2024-06-23 21:09:45
 tags: Skill
+top: 99
 ---
 I'm trying to tidy up the DevOps work skills, so I created the following list of skills and knowledge requirements.
 I may put the notes or records on each topics in the future :)
+<!--more-->
 
 ---
 ## Skills
 #### Container
-- Docker
+- {% post_link Dockerfile-Docker-compose 'Docker' %}
 - K8S
 #### CI/CD
 - Jenkins

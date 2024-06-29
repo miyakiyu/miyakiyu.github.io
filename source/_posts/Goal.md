@@ -3,6 +3,7 @@ title: Goal
 date: 2024-06-23 18:14:20
 tags: Notes
 sticky: 100
+top: 100
 ---
 What's this?
 ===
@@ -14,4 +15,4 @@ For looking for a JOB :D
 
 Article Links
 ===
-- {% post_link DevOps_skill_list_for_me %}
+- {% post_link DevOps-skill-list-for-me %}
