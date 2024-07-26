@@ -1,7 +1,8 @@
 ---
 title: Goal
 date: 2024-06-23 18:14:20
-tags: Notes
+tags: 
+- Note
 sticky: 100
 top: 100
 ---

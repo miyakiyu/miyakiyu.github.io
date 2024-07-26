@@ -28,7 +28,7 @@ This is the construct of this exercise:
 ---
 ## Shell Script
 We're starting with a shell script where we want to use netcat to send a message three times.
-#### Server
+### Server
 ```bash
 # Comfirm server is on
 echo "Server on"
@@ -39,7 +39,7 @@ do
 done
 exit
 ```
-#### Client
+### Client
 ```bash
 # Comfirm client is on
 echo "Client on"
@@ -54,7 +54,7 @@ exit
 ---
 ## Dockerfile 
 Dockerfile, it's writing for config docker image :
-#### Server 
+### Server 
 ```bash
 # Pull the latest version of the image
 FROM ubuntu:latest
@@ -68,7 +68,7 @@ RUN chmod +x /start.sh
 # After the image start, execute the shell script within the container.
 CMD["/start.sh"] 
 ```
-#### Client
+### Client
 Same config with server.
 
 ---
