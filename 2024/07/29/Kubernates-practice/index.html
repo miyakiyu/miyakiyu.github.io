@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.2.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="In this article I will practice deploy docker container to Kubernetes! referenceFor more code please visit my article repo:Github">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kubernates practice">
+<meta property="og:url" content="http://example.com/2024/07/29/Kubernates-practice/index.html">
+<meta property="og:site_name" content="May&#39;s Note">
+<meta property="og:description" content="In this article I will practice deploy docker container to Kubernetes! referenceFor more code please visit my article repo:Github">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/pic/pong.png">
+<meta property="article:published_time" content="2024-07-29T06:10:49.000Z">
+<meta property="article:modified_time" content="2024-09-22T09:42:01.508Z">
+<meta property="article:author" content="May Hsieh">
+<meta property="article:tag" content="Kubernetes">
+<meta property="article:tag" content="Docker Desktop">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/pic/pong.png">
+
+
+<link rel="canonical" href="http://example.com/2024/07/29/Kubernates-practice/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2024/07/29/Kubernates-practice/","path":"2024/07/29/Kubernates-practice/","title":"Kubernates practice"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Kubernates practice | May's Note</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">May's Note</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Some side project notes ;D</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Docker-Desktop"><span class="nav-number">1.</span> <span class="nav-text">Docker Desktop</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Describe-application-with-Kubernetes"><span class="nav-number">2.</span> <span class="nav-text">Describe application with Kubernetes</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Write-a-Dockerfile"><span class="nav-number">2.1.</span> <span class="nav-text">Write a Dockerfile</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deploy-by-Kubernetes"><span class="nav-number">2.2.</span> <span class="nav-text">Deploy by Kubernetes</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="May Hsieh"
+      src="/pic/robot.png">
+  <p class="site-author-name" itemprop="name">May Hsieh</p>
+  <div class="site-description" itemprop="description">A person who want to learing from doing and sharing :D</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/miyakiyu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;miyakiyu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:sherry910509@gmail.com" title="E-Mail → mailto:sherry910509@gmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/07/29/Kubernates-practice/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/pic/robot.png">
+      <meta itemprop="name" content="May Hsieh">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="May's Note">
+      <meta itemprop="description" content="A person who want to learing from doing and sharing :D">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Kubernates practice | May's Note">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Kubernates practice
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-07-29 14:10:49" itemprop="dateCreated datePublished" datetime="2024-07-29T14:10:49+08:00">2024-07-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2024-09-22 17:42:01" itemprop="dateModified" datetime="2024-09-22T17:42:01+08:00">2024-09-22</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>In this article I will practice deploy docker container to Kubernetes! <a target="_blank" rel="noopener" href="https://docs.docker.com/guides/deployment-orchestration/kube-deploy/">reference</a><br>For more code please visit my article repo:<a target="_blank" rel="noopener" href="https://github.com/miyakiyu/DevOps-Exercise/tree/main/Kubernetes%20practice/go">Github</a></p>
+<span id="more"></span>
+
+<h2 id="Docker-Desktop"><a href="#Docker-Desktop" class="headerlink" title="Docker Desktop"></a>Docker Desktop</h2><p>Install Docker Desktop following by official page.<br>In my case I’m using Linux mint, and this is cause the problem, so if you’re using Ubuntu-like linux and you using apt to install it will missing some package for docker desktop,here is my solution:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/apt/sources.list.d/docker.list</span><br></pre></td></tr></table></figure>
+<p>You need to fix the contact like the below one:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">deb [<span class="built_in">arch</span>=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu   jammy stable</span><br></pre></td></tr></table></figure>
+<p>I guess this is cause apt can’t get correctly version name so it will cause the error :&#x2F;</p>
+<hr>
+<h2 id="Describe-application-with-Kubernetes"><a href="#Describe-application-with-Kubernetes" class="headerlink" title="Describe application with Kubernetes"></a>Describe application with Kubernetes</h2><h3 id="Write-a-Dockerfile"><a href="#Write-a-Dockerfile" class="headerlink" title="Write a Dockerfile"></a>Write a Dockerfile</h3><p>Here is the Dockerfile for go:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">FROM golang:latest</span><br><span class="line"></span><br><span class="line">WORKDIR /app</span><br><span class="line"></span><br><span class="line">COPY . .</span><br><span class="line"></span><br><span class="line">RUN go mod init main</span><br><span class="line">RUN go mod tidy</span><br><span class="line">RUN go build -o main</span><br><span class="line"></span><br><span class="line">EXPOSE 3000</span><br><span class="line"></span><br><span class="line">CMD [<span class="string">&quot;./main&quot;</span>]</span><br></pre></td></tr></table></figure>
+<p>And here is main.go, I’m using gin official templete:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;github.com/gin-gonic/gin&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	r := gin.Default()</span><br><span class="line">	r.GET(<span class="string">&quot;/ping&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		c.JSON(<span class="number">200</span>, gin.H&#123;</span><br><span class="line">			<span class="string">&quot;message&quot;</span>: <span class="string">&quot;pong&quot;</span>,</span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;)</span><br><span class="line">	r.Run(<span class="string">&quot;:3000&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>And we build it:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -t go .</span><br></pre></td></tr></table></figure>
+<p>Then we run is as container:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name go -p 127.0.0.1:3000:3000 go</span><br></pre></td></tr></table></figure>
+<p>After that we finish the first part!</p>
+<h3 id="Deploy-by-Kubernetes"><a href="#Deploy-by-Kubernetes" class="headerlink" title="Deploy by Kubernetes"></a>Deploy by Kubernetes</h3><p>We write .yaml file to deploy this service: </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: apps/v1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  name: web-demo</span><br><span class="line">  namespace: default</span><br><span class="line">spec:</span><br><span class="line">   replicas: 1</span><br><span class="line">   selector:</span><br><span class="line">      matchLabels:</span><br><span class="line">        web: web</span><br><span class="line">   template:</span><br><span class="line">      metadata:</span><br><span class="line">        labels:</span><br><span class="line">          web: web</span><br><span class="line">      spec:</span><br><span class="line">        containers:</span><br><span class="line">          - name: go</span><br><span class="line">            image: go</span><br><span class="line">            imagePullPolicy: Never</span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">   name: web-entrypoint</span><br><span class="line">   namespace: default</span><br><span class="line">spec:</span><br><span class="line">   <span class="built_in">type</span>: NodePort</span><br><span class="line">   selector:</span><br><span class="line">      web: web</span><br><span class="line">   ports:</span><br><span class="line">      - port: 3000</span><br><span class="line">        targetPort: 3000</span><br><span class="line">        nodePort: 30001</span><br></pre></td></tr></table></figure>
+<p><em>The port here need to be the same with main.go, or it won’t show the result</em><br>Now we can deploy application with this .yaml file:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f web.yaml</span><br></pre></td></tr></table></figure>
+<p>Now you should see this:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">deployment.apps/web-demo created</span><br><span class="line">service/web-entrypoint created</span><br></pre></td></tr></table></figure>
+<p>And then we checking the deploy situation:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get deployments</span><br></pre></td></tr></table></figure>
+<p>you should see the pod:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">NAME       READY   UP-TO-DATE   AVAILABLE   AGE</span><br><span class="line">web-demo   0/1     1            0           45s</span><br></pre></td></tr></table></figure>
+<p><em>You should wait READY become 1&#x2F;1 that your service is totally ready</em><br>For checking all pods:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get services</span><br></pre></td></tr></table></figure>
+<p>You will see the service we just created and k8s service:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">NAME             TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE</span><br><span class="line">kubernetes       ClusterIP   10.96.0.1      &lt;none&gt;        443/TCP          4h58m</span><br><span class="line">web-entrypoint   NodePort    10.104.231.8   &lt;none&gt;        3000:30001/TCP   3m3s</span><br></pre></td></tr></table></figure>
+<p>Now open “localhost:30001&#x2F;ping”<br>you will see:<br><img src="/pic/pong.png" alt="pong"></p>
+<p>After that we can delete the application:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete -f bb.yaml</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Kubernetes/" rel="tag"># Kubernetes</a>
+              <a href="/tags/Docker-Desktop/" rel="tag"># Docker Desktop</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/07/22/Minikube-with-Kubernetes/" rel="prev" title="Minikube with Kubernetes">
+                  <i class="fa fa-angle-left"></i> Minikube with Kubernetes
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/08/01/Monitoring-Docker-with-Grafana-Prometheus/" rel="next" title="Monitoring Docker with Grafana & Prometheus">
+                  Monitoring Docker with Grafana & Prometheus <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">May Hsieh</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

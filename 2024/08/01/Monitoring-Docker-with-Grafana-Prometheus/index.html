@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.2.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Using Grafana and Prometheus to monitoring our Docker servicereference1reference2For more code please visit my article repo:Github">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Monitoring Docker with Grafana &amp; Prometheus">
+<meta property="og:url" content="http://example.com/2024/08/01/Monitoring-Docker-with-Grafana-Prometheus/index.html">
+<meta property="og:site_name" content="May&#39;s Note">
+<meta property="og:description" content="Using Grafana and Prometheus to monitoring our Docker servicereference1reference2For more code please visit my article repo:Github">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/pic/monitor/prom.png">
+<meta property="og:image" content="http://example.com/pic/monitor/config.png">
+<meta property="og:image" content="http://example.com/pic/monitor/1.png">
+<meta property="og:image" content="http://example.com/pic/monitor/2.png">
+<meta property="og:image" content="http://example.com/pic/monitor/3.png">
+<meta property="og:image" content="http://example.com/pic/monitor/4.png">
+<meta property="og:image" content="http://example.com/pic/monitor/up.png">
+<meta property="og:image" content="http://example.com/pic/monitor/down.png">
+<meta property="og:image" content="http://example.com/pic/monitor/mail.png">
+<meta property="article:published_time" content="2024-08-01T07:16:35.000Z">
+<meta property="article:modified_time" content="2024-08-08T13:16:15.517Z">
+<meta property="article:author" content="May Hsieh">
+<meta property="article:tag" content="Kubernetes">
+<meta property="article:tag" content="Grafana">
+<meta property="article:tag" content="Prometheus">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/pic/monitor/prom.png">
+
+
+<link rel="canonical" href="http://example.com/2024/08/01/Monitoring-Docker-with-Grafana-Prometheus/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2024/08/01/Monitoring-Docker-with-Grafana-Prometheus/","path":"2024/08/01/Monitoring-Docker-with-Grafana-Prometheus/","title":"Monitoring Docker with Grafana & Prometheus"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Monitoring Docker with Grafana & Prometheus | May's Note</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">May's Note</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Some side project notes ;D</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Config-setting-file"><span class="nav-number">1.</span> <span class="nav-text">Config setting file</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#docker-compose"><span class="nav-number">1.1.</span> <span class="nav-text">docker-compose</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Setting-Nginx"><span class="nav-number">1.2.</span> <span class="nav-text">Setting Nginx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Setting-Prometheus"><span class="nav-number">1.3.</span> <span class="nav-text">Setting Prometheus</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Setting-Grafana"><span class="nav-number">1.4.</span> <span class="nav-text">Setting Grafana</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Import-Prometheus"><span class="nav-number">1.4.1.</span> <span class="nav-text">Import Prometheus</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Setting-Dashboard"><span class="nav-number">1.4.2.</span> <span class="nav-text">Setting Dashboard</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Config-Granfana-dashboard"><span class="nav-number">1.5.</span> <span class="nav-text">Config Granfana dashboard</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Config-Alerting-in-Prometheus"><span class="nav-number">2.</span> <span class="nav-text">Config Alerting in Prometheus</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#alert-yml"><span class="nav-number">2.1.</span> <span class="nav-text">alert.yml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#config-yml"><span class="nav-number">2.2.</span> <span class="nav-text">config.yml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Add-config-to-docker-compose"><span class="nav-number">2.3.</span> <span class="nav-text">Add config to docker-compose</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">3.</span> <span class="nav-text">Conclusion</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="May Hsieh"
+      src="/pic/robot.png">
+  <p class="site-author-name" itemprop="name">May Hsieh</p>
+  <div class="site-description" itemprop="description">A person who want to learing from doing and sharing :D</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/miyakiyu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;miyakiyu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:sherry910509@gmail.com" title="E-Mail → mailto:sherry910509@gmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/08/01/Monitoring-Docker-with-Grafana-Prometheus/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/pic/robot.png">
+      <meta itemprop="name" content="May Hsieh">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="May's Note">
+      <meta itemprop="description" content="A person who want to learing from doing and sharing :D">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Monitoring Docker with Grafana & Prometheus | May's Note">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Monitoring Docker with Grafana & Prometheus
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-08-01 15:16:35" itemprop="dateCreated datePublished" datetime="2024-08-01T15:16:35+08:00">2024-08-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2024-08-08 21:16:15" itemprop="dateModified" datetime="2024-08-08T21:16:15+08:00">2024-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p><em>Using Grafana and Prometheus to monitoring our Docker service</em><br><a target="_blank" rel="noopener" href="https://medium.com/@ravipatel.it/building-a-monitoring-stack-with-prometheus-grafana-and-alerting-a-docker-compose-ef78127e4a19">reference1</a><br><a target="_blank" rel="noopener" href="https://github.com/880831ian/Prometheus-Grafana-Docker?tab=readme-ov-file">reference2</a><br>For more code please visit my article repo:<a target="_blank" rel="noopener" href="https://github.com/miyakiyu/DevOps-Exercise/tree/main/Monitoring">Github</a></p>
+<span id="more"></span>
+<p>This is my file tree:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── alertmanager</span><br><span class="line">│   └── alertmanager.yml</span><br><span class="line">├── docker-compose.yml</span><br><span class="line">├── nginx</span><br><span class="line">│   ├── Dockerfile</span><br><span class="line">│   └── status.conf</span><br><span class="line">└── prometheus</span><br><span class="line">    ├── alerts.rules.yml</span><br><span class="line">    └── prometheus.yml</span><br></pre></td></tr></table></figure>
+<p>Let’s srart!</p>
+<hr>
+<h2 id="Config-setting-file"><a href="#Config-setting-file" class="headerlink" title="Config setting file"></a>Config setting file</h2><h3 id="docker-compose"><a href="#docker-compose" class="headerlink" title="docker-compose"></a>docker-compose</h3><p>Let’s create a docker-compose file include the service we need:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">services:</span><br><span class="line">  nginx:</span><br><span class="line">    build: ./nginx/</span><br><span class="line">    container_name: nginx</span><br><span class="line">    ports:</span><br><span class="line">      - 8080:8080</span><br><span class="line">    restart: always</span><br><span class="line">    </span><br><span class="line">  nginx-prometheus-exporter:</span><br><span class="line">    image: nginx/nginx-prometheus-exporter:latest</span><br><span class="line">    container_name: nginx-prometheus-exporter</span><br><span class="line">    <span class="built_in">command</span>: -nginx.scrape-uri http://nginx:8080/stub_status</span><br><span class="line">    ports:</span><br><span class="line">      - 9113:9113</span><br><span class="line">    depends_on:</span><br><span class="line">      - nginx </span><br><span class="line"></span><br><span class="line">  prometheus:</span><br><span class="line">    image: prom/prometheus:latest</span><br><span class="line">    container_name: prometheus</span><br><span class="line">    ports: </span><br><span class="line">      - 9090:9090</span><br><span class="line">    volumes:</span><br><span class="line">      - ./prometheus:/etc/prometheus</span><br><span class="line">    <span class="built_in">command</span>:</span><br><span class="line">      - <span class="string">&#x27;--config.file=/etc/prometheus/prometheus.yml&#x27;</span></span><br><span class="line">      - <span class="string">&#x27;--web.enable-lifecycle&#x27;</span></span><br><span class="line">    restart: always</span><br><span class="line"></span><br><span class="line">  grafana:</span><br><span class="line">    image: grafana/grafana:latest</span><br><span class="line">    container_name: grafana</span><br><span class="line">    ports:</span><br><span class="line">      - 3000:3000</span><br><span class="line">    depends_on:</span><br><span class="line">      - prometheus</span><br><span class="line">    restart: always</span><br><span class="line"></span><br><span class="line">  alertmanager:</span><br><span class="line">    image: prom/alertmanager</span><br><span class="line">    container_name: alertmanager</span><br><span class="line">    ports:</span><br><span class="line">      - 9093:9093</span><br><span class="line">    volumes:</span><br><span class="line">      - ./alertmanager:/etc/alertmanager</span><br><span class="line">    <span class="built_in">command</span>:</span><br><span class="line">      - <span class="string">&#x27;--config.file=/etc/alertmanager/alertmanager.yml&#x27;</span></span><br><span class="line">    restart: always</span><br></pre></td></tr></table></figure>
+<h3 id="Setting-Nginx"><a href="#Setting-Nginx" class="headerlink" title="Setting Nginx"></a>Setting Nginx</h3><p>Here is the Dockerfile, because we want to use this version and set our conf into container so:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">FROM nginx:1.21.6 </span><br><span class="line">COPY ./status.conf /etc/nginx/conf.d/status.conf </span><br></pre></td></tr></table></figure>
+<p>Nginx in this version will start stub_status automatically.<br>And let’s setting stub_status:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen 8080;</span><br><span class="line">    server_name  localhost;</span><br><span class="line">    location /stub_status &#123;</span><br><span class="line">       stub_status on;</span><br><span class="line">       access_log off;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Start this setting.</p>
+<h3 id="Setting-Prometheus"><a href="#Setting-Prometheus" class="headerlink" title="Setting Prometheus"></a>Setting Prometheus</h3><p>Here is the setting for Prometheus:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">global:</span><br><span class="line">  scrape_interval: 10s</span><br><span class="line">scrape_configs:</span><br><span class="line">  - job_name: <span class="string">&quot;nginx&quot;</span></span><br><span class="line">    static_configs:</span><br><span class="line">      - targets: [<span class="string">&quot;localhost:8080&quot;</span>]</span><br><span class="line">  - job_name: <span class="string">&quot;prometheus&quot;</span></span><br><span class="line">    static_configs:</span><br><span class="line">      - targets: [<span class="string">&quot;localhost:9090&quot;</span>]</span><br><span class="line">  - job_name: <span class="string">&quot;nginx_exporter&quot;</span></span><br><span class="line">    static_configs:</span><br><span class="line">      - targets: [<span class="string">&quot;nginx-prometheus-exporter:9113&quot;</span>]</span><br><span class="line">alerting:</span><br><span class="line">  alertmanagers:</span><br><span class="line">    - scheme: http</span><br><span class="line">    - static_configs:</span><br><span class="line">        - targets: [<span class="string">&quot;alertmanager:9093&quot;</span>]</span><br></pre></td></tr></table></figure>
+<p>Prometheus will scrape targets every 10 seconds. The scrape_configs section defines all the targets that need to be scraped.<br>And here is the Prometheus interface:<br><img src="/pic/monitor/prom.png" alt="Interface"><br>If you see the green up that’s mean your service yopu want to monitoring are up!</p>
+<h3 id="Setting-Grafana"><a href="#Setting-Grafana" class="headerlink" title="Setting Grafana"></a>Setting Grafana</h3><h4 id="Import-Prometheus"><a href="#Import-Prometheus" class="headerlink" title="Import Prometheus"></a>Import Prometheus</h4><p>Now we can visit Grafana with <code>localhost:3000/</code>.<br>Login with admin, and go to search bar and search <code>Data Sources</code>, and add one, we choose Prometheus.<br>After that set URL with below photo and click <code>Save&amp;Test</code><br><img src="/pic/monitor/config.png" alt="config"></p>
+<h4 id="Setting-Dashboard"><a href="#Setting-Dashboard" class="headerlink" title="Setting Dashboard"></a>Setting Dashboard</h4><p>As you done, now we add a new Dashboard with below steps:<br>Click Add visualize.<br><img src="/pic/monitor/1.png" alt="step 1"><br>Choose Prometheus.<br><img src="/pic/monitor/2.png" alt="step 2"><br>Config it as you like and don’t forget to click Save!<br><img src="/pic/monitor/3.png" alt="step 3"><br>And…Done! We got dashboard now.<br><img src="/pic/monitor/4.png" alt="step 4"></p>
+<h3 id="Config-Granfana-dashboard"><a href="#Config-Granfana-dashboard" class="headerlink" title="Config Granfana dashboard"></a>Config Granfana dashboard</h3><p>Let’s setting dashboard, import <code>ID:12708</code> dashboard made by other person, here is the result we got Nginx connection situation from Prometheus:<br><img src="/pic/monitor/up.png" alt="dashboard"><br>When we visit <code>localhost:80</code> it will request to niginx and you could see the right side, the line is increase.<br>When we stop Nginx service:<br><img src="/pic/monitor/down.png" alt="down"></p>
+<hr>
+<h2 id="Config-Alerting-in-Prometheus"><a href="#Config-Alerting-in-Prometheus" class="headerlink" title="Config Alerting in Prometheus"></a>Config Alerting in Prometheus</h2><p>We need to use PromQL for configure the alert rule and alertmanager.</p>
+<h3 id="alert-yml"><a href="#alert-yml" class="headerlink" title="alert.yml"></a>alert.yml</h3><p>let’s create <code>alert.yml</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">groups</span>:</span><br><span class="line">  - name: <span class="built_in">test</span></span><br><span class="line">    rules:</span><br><span class="line">      <span class="comment"># Alert for any instance that is unreachable for &gt;5 minutes.</span></span><br><span class="line">      - alert: InstanceDown</span><br><span class="line">        <span class="built_in">expr</span>: up == 0</span><br><span class="line">        <span class="keyword">for</span>: 10s</span><br><span class="line">        labels:</span><br><span class="line">          severity: page</span><br><span class="line">        annotations:</span><br><span class="line">          summary: <span class="string">&quot;Instance &#123;&#123; <span class="variable">$labels</span>.instance &#125;&#125; down&quot;</span></span><br><span class="line">          description: <span class="string">&quot;&#123;&#123; <span class="variable">$labels</span>.instance &#125;&#125; of job &#123;&#123; <span class="variable">$labels</span>.job &#125;&#125; has been down for more than 5 minutes.&quot;</span></span><br></pre></td></tr></table></figure>
+<p>This will let Alertmanager follow this rule to send the notification, and next let’s setting it.</p>
+<h3 id="config-yml"><a href="#config-yml" class="headerlink" title="config.yml"></a>config.yml</h3><p>Let’s setting Alertmanager:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">route:</span><br><span class="line">  receiver: <span class="string">&quot;gmail-notifications&quot;</span></span><br><span class="line">receivers:</span><br><span class="line">  - name: <span class="string">&quot;gmail-notifications&quot;</span></span><br><span class="line">    email_configs:</span><br><span class="line">      - to: (YOUR_EMAIL)</span><br><span class="line">        from: (YOUR_EMAIL)</span><br><span class="line">        smarthost: smtp.gmail.com:587</span><br><span class="line">        auth_username: (YOUR_EMAIL)</span><br><span class="line">        auth_identity: (YOUR_EMAIL)</span><br><span class="line">        auth_password: ijox jecz tdit cipc</span><br><span class="line">        send_resolved: <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="Add-config-to-docker-compose"><a href="#Add-config-to-docker-compose" class="headerlink" title="Add config to docker-compose"></a>Add config to docker-compose</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">  prometheus:</span><br><span class="line">    ...</span><br><span class="line">      <span class="built_in">command</span>:</span><br><span class="line">        - <span class="string">&#x27;--config.file=/etc/prometheus/prometheus.yml&#x27;</span></span><br><span class="line">        - <span class="string">&#x27;--web.enable-lifecycle&#x27;</span></span><br><span class="line">...</span><br><span class="line">  alertmanager:</span><br><span class="line">    image: prom/alertmanager</span><br><span class="line">    container_name: alertmanager</span><br><span class="line">    ports:</span><br><span class="line">      - 9093:9093</span><br><span class="line">    volumes:</span><br><span class="line">      - ./alertmanager:/etc/alertmanager</span><br><span class="line">    <span class="built_in">command</span>:</span><br><span class="line">      - <span class="string">&#x27;--config.file=/etc/alertmanager/config.yml&#x27;</span></span><br><span class="line">    restart: always</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>After set this, restart all the service by using <code>docker compose restart YOUR_CONTAINER_NAMES</code>, and wait a minute you will get the email:<br><img src="/pic/monitor/mail.png" alt="mail"></p>
+<hr>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>After doing that, I learn how to set up Prometheus and Grafana by using docker, next I hope I could doing this on Kuberbetes :&#x2F;</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Kubernetes/" rel="tag"># Kubernetes</a>
+              <a href="/tags/Grafana/" rel="tag"># Grafana</a>
+              <a href="/tags/Prometheus/" rel="tag"># Prometheus</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/07/29/Kubernates-practice/" rel="prev" title="Kubernates practice">
+                  <i class="fa fa-angle-left"></i> Kubernates practice
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/08/23/Jenkins-with-GitHub/" rel="next" title="Jenkins with GitHub">
+                  Jenkins with GitHub <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">May Hsieh</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

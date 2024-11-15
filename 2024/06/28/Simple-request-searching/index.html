@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.2.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Using Docker to containerize the MySQL, Nginx and Golang to provide the web service, and managing these containers with docker-compose to create a simple search service.For more code please visit my a">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Simple request searching">
+<meta property="og:url" content="http://example.com/2024/06/28/Simple-request-searching/index.html">
+<meta property="og:site_name" content="May&#39;s Note">
+<meta property="og:description" content="Using Docker to containerize the MySQL, Nginx and Golang to provide the web service, and managing these containers with docker-compose to create a simple search service.For more code please visit my a">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/pic/request/pj.png">
+<meta property="og:image" content="http://example.com/pic/request/problem.png">
+<meta property="article:published_time" content="2024-06-28T05:31:59.000Z">
+<meta property="article:modified_time" content="2024-08-02T11:04:03.844Z">
+<meta property="article:author" content="May Hsieh">
+<meta property="article:tag" content="Docker">
+<meta property="article:tag" content="MySQL">
+<meta property="article:tag" content="Nginx">
+<meta property="article:tag" content="Golang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/pic/request/pj.png">
+
+
+<link rel="canonical" href="http://example.com/2024/06/28/Simple-request-searching/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2024/06/28/Simple-request-searching/","path":"2024/06/28/Simple-request-searching/","title":"Simple request searching"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Simple request searching | May's Note</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">May's Note</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Some side project notes ;D</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Docker"><span class="nav-number">1.</span> <span class="nav-text">Docker</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MySQL-settings"><span class="nav-number">1.1.</span> <span class="nav-text">MySQL settings</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Nginx-settings"><span class="nav-number">1.2.</span> <span class="nav-text">Nginx settings</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Golang-settings"><span class="nav-number">1.3.</span> <span class="nav-text">Golang settings</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Gin-with-MySQL"><span class="nav-number">2.</span> <span class="nav-text">Gin with MySQL</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MySQL-pre-set"><span class="nav-number">2.1.</span> <span class="nav-text">MySQL pre-set</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Gin"><span class="nav-number">2.2.</span> <span class="nav-text">Gin</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Problems-Fixing"><span class="nav-number">3.</span> <span class="nav-text">Problems Fixing</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Can%E2%80%99t-connect-MySQL-with-GORM"><span class="nav-number">3.1.</span> <span class="nav-text">Can’t connect MySQL with GORM</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="May Hsieh"
+      src="/pic/robot.png">
+  <p class="site-author-name" itemprop="name">May Hsieh</p>
+  <div class="site-description" itemprop="description">A person who want to learing from doing and sharing :D</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/miyakiyu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;miyakiyu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:sherry910509@gmail.com" title="E-Mail → mailto:sherry910509@gmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/06/28/Simple-request-searching/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/pic/robot.png">
+      <meta itemprop="name" content="May Hsieh">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="May's Note">
+      <meta itemprop="description" content="A person who want to learing from doing and sharing :D">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Simple request searching | May's Note">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Simple request searching
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-06-28 13:31:59" itemprop="dateCreated datePublished" datetime="2024-06-28T13:31:59+08:00">2024-06-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2024-08-02 19:04:03" itemprop="dateModified" datetime="2024-08-02T19:04:03+08:00">2024-08-02</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p><img src="/pic/request/pj.png" alt="Structure chart"><br><em>Using Docker to containerize the MySQL, Nginx and Golang to provide the web service, and managing these containers with docker-compose to create a simple search service.</em><br>For more code please visit my article repo:<a target="_blank" rel="noopener" href="https://github.com/miyakiyu/DevOps-Exercise/tree/main/Simple%20searching">Githubs</a></p>
+<span id="more"></span>
+
+<p>This will be a small application where users can request data through a website. For the web service, I will use Nginx for reverse proxy to Golang (basiclly I like Gin :P), and for the database, I will use MySQL.<br>This is my folder tree:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── docker-compose.yml</span><br><span class="line">├── Go</span><br><span class="line">│   ├── Dockerfile</span><br><span class="line">│   ├── main.go</span><br><span class="line">│   └── models</span><br><span class="line">│       └── cat.go</span><br><span class="line">├── MySQL</span><br><span class="line">│   ├── Dockerfile</span><br><span class="line">│   └── my.cnf</span><br><span class="line">└── Nginx</span><br><span class="line">    ├── Dockerfile</span><br><span class="line">    └── nginx.conf</span><br></pre></td></tr></table></figure>
+<p>So let’s start!</p>
+<hr>
+<h2 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h2><ol>
+<li><h3 id="MySQL-settings"><a href="#MySQL-settings" class="headerlink" title="MySQL settings"></a>MySQL settings</h3></li>
+</ol>
+<p>First, let’s setting mysql image.<br><a target="_blank" rel="noopener" href="https://ithelp.ithome.com.tw/articles/10340991">reference</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># MySQL setting file</span></span><br><span class="line">FROM mysql:latest</span><br><span class="line"></span><br><span class="line"><span class="comment"># Setting mysql</span></span><br><span class="line">ENV MYSQL_DATABASE=(Your db)</span><br><span class="line">ENV MYSQL_USER=(Your user name)</span><br><span class="line">ENV MYSQL_PASSWORD=(Your password)</span><br><span class="line">ENV MYSQL_ROOT_PASSWORD=(Your password)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Using my.cnf</span></span><br><span class="line">COPY my.cnf /etc/my.cnf</span><br><span class="line"></span><br><span class="line"><span class="comment"># Set workdir</span></span><br><span class="line">WORKDIR /var/lib/mysql</span><br><span class="line"></span><br><span class="line"><span class="comment"># Set port, deafult is 3306 or anyother you like</span></span><br><span class="line">EXPOSE 3306</span><br><span class="line"></span><br><span class="line"><span class="comment"># Start service</span></span><br><span class="line">CMD [<span class="string">&quot;mysqld&quot;</span>]</span><br></pre></td></tr></table></figure>
+<p>As you can see I define a  file call “my.cnf”, it’s a config file for mysql.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line"><span class="comment"># If general_log is set to 1, MySQL will log all queries</span></span><br><span class="line">general_log = 1</span><br><span class="line"></span><br><span class="line"><span class="comment"># Specify the path for storing the general log</span></span><br><span class="line">general_log_file = /var/log/mysql.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># Log output will be written to a file</span></span><br><span class="line">log_output = file</span><br></pre></td></tr></table></figure>
+<p>After finishing the Dockerfile, you can test it first. Run the following command to build an image:<br><code>docker build --no-cache -t (Your image name) .</code></p>
+<p>After building the image, you can run it with:<br><code>docker run --name (Give it a name) -p 3306:3306 (Your image name)</code></p>
+<p>And test mysql service is on, using this:<br><code>mysql -u root -p -h 127.0.0.1 -P 3306</code><br>After that you should now see the service running successfully!</p>
+<p>If you want to see the logs, you can enter the container:<br><code>docker exec -it (Your container name) /bin/bash</code></p>
+<ol start="2">
+<li><h3 id="Nginx-settings"><a href="#Nginx-settings" class="headerlink" title="Nginx settings"></a>Nginx settings</h3></li>
+</ol>
+<p>Created Dockerfile like this:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Nginx settings</span></span><br><span class="line">FROM nginx:latest</span><br><span class="line"></span><br><span class="line"><span class="comment"># Setting nginx</span></span><br><span class="line"><span class="comment"># Copy the local nginx.conf to Docker </span></span><br><span class="line">COPY nginx.conf /etc/nginx/nginx.conf</span><br><span class="line"></span><br><span class="line"><span class="comment"># Open the port 80 for Using </span></span><br><span class="line">EXPOSE 80</span><br></pre></td></tr></table></figure>
+<p>After we done the Dockerfile setting then we could start setting the Nginx.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">events&#123;</span><br><span class="line">  worker_connections 1024;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">http &#123;</span><br><span class="line">  server&#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    server_name localhost;</span><br><span class="line">    <span class="comment"># How to handle the request from /</span></span><br><span class="line">    <span class="comment"># We rever proxy to backend(Golang service) port 8080</span></span><br><span class="line">    location / &#123;</span><br><span class="line">      proxy_pass http://backend:8080;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>So now we have the reverse proxy to Golang.</p>
+<ol start="3">
+<li><h3 id="Golang-settings"><a href="#Golang-settings" class="headerlink" title="Golang settings"></a>Golang settings</h3></li>
+</ol>
+<p>Now let’s setting Golang</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">FROM golang:latest</span><br><span class="line"></span><br><span class="line">WORKDIR /app</span><br><span class="line"></span><br><span class="line"><span class="comment"># Copy all file into image</span></span><br><span class="line">COPY . .</span><br><span class="line"></span><br><span class="line"><span class="comment"># The hardest part is the Go module :(</span></span><br><span class="line">RUN go mod init main</span><br><span class="line">RUN go mod tidy</span><br><span class="line"><span class="comment"># DO NOT RUN GO APP DIRECTLY! It won&#x27;t stop :(</span></span><br><span class="line">RUN go build -o main</span><br><span class="line"></span><br><span class="line"><span class="comment"># Different then Nginx</span></span><br><span class="line">EXPOSE 8080</span><br><span class="line"></span><br><span class="line">CMD [<span class="string">&quot;./main&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+<p>And here I choose using Gin for interacting with MySQL and return the result.<br>So here I using official example for test reverse proxy is fine.</p>
+<hr>
+<h2 id="Gin-with-MySQL"><a href="#Gin-with-MySQL" class="headerlink" title="Gin with MySQL"></a>Gin with MySQL</h2><ol>
+<li><h3 id="MySQL-pre-set"><a href="#MySQL-pre-set" class="headerlink" title="MySQL pre-set"></a>MySQL pre-set</h3></li>
+</ol>
+<p>First, we create a new database:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> DATABASE cat;</span><br></pre></td></tr></table></figure>
+<p>And we check our database:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SHOW</span> databases;</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator">+</span><span class="comment">--------------------+</span></span><br><span class="line"><span class="operator">|</span> Database           <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------+</span></span><br><span class="line"><span class="operator">|</span> cat                <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> information_schema <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> mydatabase         <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> mysql              <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> performance_schema <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> sys                <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------+</span></span><br></pre></td></tr></table></figure>
+<p>We use this database for create a new table inside of it, for store data:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">USE cat; (If you suceesefully change database you will see <span class="string">&#x27;Database changed&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> cats (`id` <span class="type">int</span>, `name` <span class="type">varchar</span>(<span class="number">255</span>));</span><br></pre></td></tr></table></figure>
+<p>So far we can use this command to check if the table is sucessfully create:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DESCRIBE</span> cats;</span><br></pre></td></tr></table></figure>
+<p>And you should see:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator">+</span><span class="comment">-------+--------------+------+-----+---------+-------+</span></span><br><span class="line"><span class="operator">|</span> Field <span class="operator">|</span> Type         <span class="operator">|</span> <span class="keyword">Null</span> <span class="operator">|</span> Key <span class="operator">|</span> <span class="keyword">Default</span> <span class="operator">|</span> Extra <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-------+--------------+------+-----+---------+-------+</span></span><br><span class="line"><span class="operator">|</span> id    <span class="operator">|</span> <span class="type">int</span>          <span class="operator">|</span> YES  <span class="operator">|</span>     <span class="operator">|</span> <span class="keyword">NULL</span>    <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> name  <span class="operator">|</span> <span class="type">varchar</span>(<span class="number">255</span>) <span class="operator">|</span> YES  <span class="operator">|</span>     <span class="operator">|</span> <span class="keyword">NULL</span>    <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-------+--------------+------+-----+---------+-------+</span></span><br></pre></td></tr></table></figure>
+<p>Now we insert some value into table, and check it:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> cats;</span><br></pre></td></tr></table></figure>
+<p>This is our final table looks like:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator">+</span><span class="comment">------+----------+</span></span><br><span class="line"><span class="operator">|</span> id   <span class="operator">|</span> name     <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------+----------+</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">1</span> <span class="operator">|</span> Nekoking <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">2</span> <span class="operator">|</span> Neko1    <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">3</span> <span class="operator">|</span> Neko2    <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------+----------+</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><h3 id="Gin"><a href="#Gin" class="headerlink" title="Gin"></a>Gin</h3></li>
+</ol>
+<p>In last part we create database and table, now we use Gin to interate with MySQL, here we only doing searching.<br>Our folder tree lioos like:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── Dockerfile</span><br><span class="line">├── main.go</span><br><span class="line">└── models</span><br><span class="line">    └── cat.go</span><br></pre></td></tr></table></figure>
+<p>Let’s looks “main.go”</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;log&quot;</span></span><br><span class="line">	<span class="string">&quot;net/http&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;github.com/gin-gonic/gin&quot;</span></span><br><span class="line">	<span class="string">&quot;gorm.io/driver/mysql&quot;</span></span><br><span class="line">	<span class="string">&quot;gorm.io/gorm&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;(Your folder)/models&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// Globla setting</span></span><br><span class="line">	dsn := <span class="string">&quot;YOUR_USER_NAME:YOUR_PASSWORD@tcp(YOUR_IP_AND_PORT)/YOUR_DATABASE&quot;</span></span><br><span class="line">	db, err := gorm.Open(mysql.Open(dsn), &amp;gorm.Config&#123;&#125;)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatalf(<span class="string">&quot;failed to connect to database: %v&quot;</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	r := gin.Default()</span><br><span class="line">	<span class="comment">// Home </span></span><br><span class="line">	r.GET(<span class="string">&quot;/&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		c.JSON(http.StatusOK, gin.H&#123;<span class="string">&quot;data&quot;</span>: <span class="string">&quot;Hello World&quot;</span>&#125;)</span><br><span class="line">	&#125;)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Get cats</span></span><br><span class="line">	r.GET(<span class="string">&quot;/cats&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		cats, err := models.GetCats(db)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			c.JSON(http.StatusInternalServerError, gin.H&#123;<span class="string">&quot;error&quot;</span>: err.Error()&#125;)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">		c.JSON(http.StatusOK, cats)</span><br><span class="line">	&#125;)</span><br><span class="line"></span><br><span class="line">	r.Run()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>I use GORM to interactive with MySQL database, and here is my &#x2F;modles:</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> models</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;gorm.io/gorm&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Cat <span class="keyword">struct</span> &#123;</span><br><span class="line">	ID   <span class="type">uint</span>   <span class="string">`json:&quot;id&quot;`</span></span><br><span class="line">	Name <span class="type">string</span> <span class="string">`json:&quot;name&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">GetCats</span><span class="params">(db *gorm.DB)</span></span> ([]Cat, <span class="type">error</span>) &#123;</span><br><span class="line">	<span class="keyword">var</span> cats []Cat</span><br><span class="line">	result := db.Find(&amp;cats)</span><br><span class="line">	<span class="keyword">return</span> cats, result.Error</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Define struct for store result.</p>
+<hr>
+<h2 id="Problems-Fixing"><a href="#Problems-Fixing" class="headerlink" title="Problems Fixing"></a>Problems Fixing</h2><p>When I doing this project I have be beaten by a lot of unexcept problems, I write it here for those who have the same problem! :D</p>
+<h3 id="Can’t-connect-MySQL-with-GORM"><a href="#Can’t-connect-MySQL-with-GORM" class="headerlink" title="Can’t connect MySQL with GORM"></a>Can’t connect MySQL with GORM</h3><p><a target="_blank" rel="noopener" href="https://medium.com/tech-learn-share/docker-mysql-access-denied-for-user-172-17-0-1-using-password-yes-c5eadad582d3">reference</a><br><img src="/pic/request/problem.png" alt="Error"><br>I’ve been trying to use GORM to connect to MySQL, but I’ve been encountering consistent failures. It’s frustrating and waste my time. :(<br>I suspected the issue might be due to incorrect user credentials or IP settings. So, I accessed the MySQL container to create a new user with the correct permissions and IP. After that, I finally able to connect successfully!</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Docker/" rel="tag"># Docker</a>
+              <a href="/tags/MySQL/" rel="tag"># MySQL</a>
+              <a href="/tags/Nginx/" rel="tag"># Nginx</a>
+              <a href="/tags/Golang/" rel="tag"># Golang</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/06/23/DevOps-skill-list-for-me/" rel="prev" title="DevOps skill list for me">
+                  <i class="fa fa-angle-left"></i> DevOps skill list for me
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/06/28/Dockerfile-Docker-compose/" rel="next" title="Dockerfile & Docker compose">
+                  Dockerfile & Docker compose <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">May Hsieh</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
