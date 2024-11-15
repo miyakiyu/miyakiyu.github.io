@@ -13,13 +13,15 @@ I may put the notes or records on each topics in the future :)
 ## Skills
 ### Container
 - {% post_link Dockerfile-Docker-compose 'Docker' %}
-- {% post_link Minikube-with-Kubernetes 'Kubernetes' %}
+- Kubernetes
+    - {% post_link Kubernates-practice 'K8s' %}
+    - {% post_link Minikube-with-Kubernetes 'Minikube' %}
 ### CI/CD
 - Jenkins
+    - {% post_link Jenkins-with-GitHub 'CI' %}
 ### Monitor
-- Grafana
+- {% post_link Monitoring-Docker-with-Grafana-Prometheus 'Grafana + Prometheus' %}
 - ELK
-- Prometheus
 ### Script
 - Bash
 - Powershell
@@ -29,9 +31,9 @@ I may put the notes or records on each topics in the future :)
 ### SQL
 - {% post_link Simple-request-searching 'MySQL' %}
 ### Web server
-- Nginx
+- {% post_link Simple-request-searching 'Nginx' %}
 ### Cloud 
-- AWS
+- {% post_link AWS-setting-and-deploy-the-service 'AWS' %}
 - Azure
 
 ---

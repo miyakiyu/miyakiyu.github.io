@@ -7,6 +7,7 @@ top: 98
 ---
 Because I’m confused by Dockerfile and Docker Compose, I have this exercise to help me understand :D
 *Now, you need to create two containers (server and client) using Dockerfile and Docker Compose. The server will send “Hello, World” to the client, and after they send and receive the message three times, they will shut down.*
+For more code please visit my article repo:[Github](https://github.com/miyakiyu/DevOps-Exercise/tree/main/Dockerfile%20and%20compose%20)
 
 <!--more-->
 
