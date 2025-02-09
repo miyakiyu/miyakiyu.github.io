@@ -28,10 +28,11 @@
 <meta property="og:description" content="This is a Gin API for handling CRUD functions.I will use books for example.">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2025-01-06T13:14:01.000Z">
-<meta property="article:modified_time" content="2025-01-23T08:53:48.401Z">
+<meta property="article:modified_time" content="2025-01-24T03:40:45.719Z">
 <meta property="article:author" content="May Hsieh">
 <meta property="article:tag" content="Gin">
-<meta property="article:tag" content="MySQL">
+<meta property="article:tag" content="Postgresql">
+<meta property="article:tag" content="Backend">
 <meta name="twitter:card" content="summary">
 
 
@@ -130,7 +131,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-count">11</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -140,7 +141,7 @@
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-count">16</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>
@@ -211,7 +212,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-01-23 16:53:48" itemprop="dateModified" datetime="2025-01-23T16:53:48+08:00">2025-01-23</time>
+      <time title="Modified: 2025-01-24 11:40:45" itemprop="dateModified" datetime="2025-01-24T11:40:45+08:00">2025-01-24</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -219,7 +220,7 @@
       </span>
       <span class="post-meta-item-text">In</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Gin/" itemprop="url" rel="index"><span itemprop="name">Gin</span></a>
+          <a href="/categories/Go/" itemprop="url" rel="index"><span itemprop="name">Go</span></a>
         </span>
     </span>
 
@@ -247,6 +248,7 @@
 
 <h2 id="database-go"><a href="#database-go" class="headerlink" title="database.go"></a>database.go</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> database</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;database/sql&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line">	_ <span class="string">&quot;github.com/lib/pq&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ConnectDB</span><span class="params">(dsn <span class="type">string</span>)</span></span> (*sql.DB, <span class="type">error</span>) &#123;</span><br><span class="line">	db, err := sql.Open(<span class="string">&quot;postgres&quot;</span>, dsn)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, fmt.Errorf(<span class="string">&quot;failed to open database: %w&quot;</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err := db.Ping(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, fmt.Errorf(<span class="string">&quot;database connection failed: %w&quot;</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> db, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<hr>
 <h2 id="main-go"><a href="#main-go" class="headerlink" title="main.go"></a>main.go</h2><h3 id="POST-Insert"><a href="#POST-Insert" class="headerlink" title="POST&#x2F;Insert"></a>POST&#x2F;Insert</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// New book</span></span><br><span class="line">	r.POST(<span class="string">&quot;/new&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		<span class="keyword">var</span> book models.Books</span><br><span class="line">		<span class="keyword">if</span> err := c.ShouldBindJSON(&amp;book); err != <span class="literal">nil</span> &#123;</span><br><span class="line">			c.JSON(http.StatusBadRequest, gin.H&#123;<span class="string">&quot;error&quot;</span>: err.Error()&#125;)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// DB.exec for no returnvalue</span></span><br><span class="line">		<span class="comment">// DB.QueryRow for returnvalue</span></span><br><span class="line">		<span class="comment">// ID is auto increment</span></span><br><span class="line">		query := <span class="string">&quot;INSERT INTO book (title, price) VALUES ($1, $2) RETURNING id&quot;</span></span><br><span class="line">		result := db.QueryRow(query, book.Title, book.Price).Scan(&amp;book.ID)</span><br><span class="line">		<span class="keyword">if</span> result != <span class="literal">nil</span> &#123;</span><br><span class="line">			c.JSON(http.StatusInternalServerError, gin.H&#123;<span class="string">&quot;error&quot;</span>: <span class="string">&quot;Failed to insert book&quot;</span>&#125;)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">		c.JSON(http.StatusOK, book)</span><br><span class="line">	&#125;)</span><br></pre></td></tr></table></figure>
 
 <hr>
@@ -269,7 +271,8 @@
     <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/Gin/" rel="tag"># Gin</a>
-              <a href="/tags/MySQL/" rel="tag"># MySQL</a>
+              <a href="/tags/Postgresql/" rel="tag"># Postgresql</a>
+              <a href="/tags/Backend/" rel="tag"># Backend</a>
           </div>
 
         
@@ -281,6 +284,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2025/01/24/Shopping-cart-Go/" rel="next" title="Shopping cart, Go!">
+                  Shopping cart, Go! <i class="fa fa-angle-right"></i>
+                </a>
             </div>
           </div>
     </footer>
